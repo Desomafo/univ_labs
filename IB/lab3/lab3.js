@@ -2,11 +2,29 @@ function randomIntFromInterval(min,max) {
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 
+function refreshTable() {
+    for (var i in Users) {
+        for (var j = 1; j <= 5; j++) {
+            document.getElementById(i).insertCell(j).innerHTML = rights[data[j]];
+        }
+        Users[i] = data;
+    }
+}
+
+function log_out() {
+    delete active_user;
+    action_btn.style.visibility = "hidden";
+    actions_list.style.visibility = "hidden";
+}
+
+///////////////
+// Data section
+///////////////
+
 var action_btn = document.getElementById("action");
 var actions_list = document.getElementById("actions_list");
-action_btn.style.visibility = "hidden";
-actions_list.style.visibility = "hidden";
 
+// 10 Users list
 var Users = {
     1: "Иван",
     2: "Андрей",
@@ -19,7 +37,18 @@ var Users = {
     9: "Дарья",
     10: "Эдуард",
 };
+Object.defineProperty(Users, "findUserByName", {enumerable: false,});
+Users.findUserByName = function (name) {
+    for (var id in this) {
+        if (this.hasOwnProperty(id)) {
+            if (this[id].name == name) {
+                return id;
+            }
+        }
+    }
+};
 
+// Rights list
 var rights = {
     0: "Полный запрет",
     1: "Передача прав",
@@ -32,17 +61,32 @@ var rights = {
 }
 
 var admin = {};
+var active_user = {};
+
+
+/////////
+// Begin
+////////
+
+// Hide interactions with user onload
+log_out();
+
+// Random admin creation
 admin.id = randomIntFromInterval(1, 10);
 admin.name = Users[admin.id];
+for (var i = 1; i < 6; i++) {
+    admin[i] = 7;
+}
 document.getElementById("admin_name").innerHTML += Users[admin.id];
 
+// Fill names into table
 delete Users[admin.id];
 document.getElementById(admin.id).insertCell(0).innerHTML = admin.name;
 for (var j = 1; j <= 5; j++) {
     document.getElementById(admin.id).insertCell(j).innerHTML = rights[7];
 }
-console.log(Users);
 
+// Fill rights into table
 var data = {};
 for (var i in Users) {
     data = {};
@@ -54,13 +98,15 @@ for (var i in Users) {
     }
     Users[i] = data;
 }
-console.log(Users);
 
-var active_user = {};
+///////////////////
+// Event listeners
+///////////////////
+
+// User authorization
 document.getElementById("sign_in").addEventListener("click", function () {
     active_user.name = prompt("Введите идентификатор");
     for (var i in Users) {
-        console.log(i);
         if (Users[i].name == active_user.name) {
             active_user = Users[i];
             alert("Вход совершен успешно");
@@ -76,37 +122,86 @@ document.getElementById("sign_in").addEventListener("click", function () {
         actions_list.style.visibility = "visible";
     } else {
         alert("Неверный ввод, попробуйте еще раз");
-        delete active_user;
-        action_btn.style.visibility = "hidden";
-        actions_list.style.visibility = "hidden";
+        log_out();
     }
 });
 
+// User actions
 var action;
-var file, actionTo, fileTo;
+var file, rightTo, give_name;
 action_btn.addEventListener("click", function () {
     action = +prompt("Введите номер действия");
     if (action == 3) {
+
         file = +prompt("Право на какой объект передается?");
         if (file <= 0 && file > 6) {
             alert("Выбран неверный файл");
             return;
         }
-        actionTo = +prompt("Какое право передается?");
-        if (actionTo - active_user[file][0] != 1 ||
-            actionTo - active_user[file][0] != 2 ||
-            actionTo - active_user[file][0] != 4) {
-                alert("Выбран неверный файл");
+
+        rightTo = +prompt("Какое право передается?", "2 - запись или 4 - чтение");
+        if (rightTo != 2 && rightTo != 4) {
+            alert("Выбрано неверное право");
+            return;
+        } else {
+            if (active_user[file][0] - rightTo != 1 &&
+                active_user[file][0] != 7) {
+                    alert("Вы не можете передать данное право");
+                    return;
+            }
+        }
+
+        give_name = +prompt("Идентификатор получателя");
+        var give_id = Users.findUserByName(give_name);
+        if (rightTo ==  Users[give_id][file] ||
+            rightTo ==  Users[give_id][file] + 1 ||
+            Users[give_id][file] == 7 ||
+            Users[give_id][file] == 6) {
+                alert("У данного пользователя уже есть данное право");
                 return;
+        } else {
+            Users[give_id][file] += rightTo;
+            alert("Передача прав успешно совершена");
+            refreshTable();
         }
     }
-    if (typeof active_user[action] !== 'undefined') {
-        switch (aciton) {
-            case 3:
+    if (action == 2) {
 
-                break;
+        file = +prompt("В какой файл производить запись?");
+        if (file <= 0 && file > 6) {
+            alert("Выбран неверный файл");
+            return;
         }
-    } else {
-        alert("У вас нет прав для данного действия");
+
+        if (active_user[file] != 2 &&
+            active_user[file] != 3 &&
+            active_user[file] != 6 &&
+            active_user[file] != 7) {
+                alert("Вы не можете производить запись в данный файл");
+                return;
+        }
+
+        alert("Запись успешно произведена");
+    }
+    if (action == 1) {
+
+        file = +prompt("Какой файл читать?");
+        if (file <= 0 && file > 6) {
+            alert("Выбран неверный файл");
+            return;
+        }
+
+        if (active_user[file] != 4 &&
+            active_user[file] != 5 &&
+            active_user[file] != 6 &&
+            active_user[file] != 7) {
+                alert("Вы не можете читать данный файл");
+                return;
+        }
+
+        alert("Чтение успешно завершено");
+    }
+    if (action == 4) {
+        log_out();
     }
 });
