@@ -5,16 +5,24 @@ function randomIntFromInterval(min,max) {
 function refreshTable() {
     for (var i in Users) {
         for (var j = 1; j <= 5; j++) {
-            document.getElementById(i).insertCell(j).innerHTML = rights[data[j]];
+            document.getElementById(i).childNodes[j+1].innerHTML = rights[Users[i][j]];
         }
-        Users[i] = data;
     }
 }
 
 function log_out() {
-    delete active_user;
+    active_user = {};
     action_btn.style.visibility = "hidden";
     actions_list.style.visibility = "hidden";
+    active_user_name_txt.style.visibility = "hidden";
+}
+
+function log_in() {
+    alert("Вход совершен успешно");
+    action_btn.style.visibility = "visible";
+    actions_list.style.visibility = "visible";
+    active_user_name_txt.style.visibility = "visible";
+    active_user_name_txt.innerHTML =  "Текущий пользователь: " + active_user.name;
 }
 
 ///////////////
@@ -23,6 +31,7 @@ function log_out() {
 
 var action_btn = document.getElementById("action");
 var actions_list = document.getElementById("actions_list");
+var active_user_name_txt = document.getElementById("active_user_name");
 
 // 10 Users list
 var Users = {
@@ -37,12 +46,12 @@ var Users = {
     9: "Дарья",
     10: "Эдуард",
 };
-Object.defineProperty(Users, "findUserByName", {enumerable: false,});
+Object.defineProperty(Users, "findUserByName", {enumerable: false, writable: true});
 Users.findUserByName = function (name) {
     for (var id in this) {
         if (this.hasOwnProperty(id)) {
             if (this[id].name == name) {
-                return id;
+                return +id;
             }
         }
     }
@@ -105,21 +114,17 @@ for (var i in Users) {
 
 // User authorization
 document.getElementById("sign_in").addEventListener("click", function () {
-    active_user.name = prompt("Введите идентификатор");
+    input_name = prompt("Введите идентификатор");
     for (var i in Users) {
-        if (Users[i].name == active_user.name) {
+        if (Users[i].name == input_name) {
             active_user = Users[i];
-            alert("Вход совершен успешно");
-            action_btn.style.visibility = "visible";
-            actions_list.style.visibility = "visible";
+            log_in();
             return;
         }
     }
-    if (active_user.name == admin.name) {
+    if (input_name == admin.name) {
         active_user = admin;
-        alert("Вход совершен успешно");
-        action_btn.style.visibility = "visible";
-        actions_list.style.visibility = "visible";
+        log_in();
     } else {
         alert("Неверный ввод, попробуйте еще раз");
         log_out();
@@ -144,17 +149,17 @@ action_btn.addEventListener("click", function () {
             alert("Выбрано неверное право");
             return;
         } else {
-            if (active_user[file][0] - rightTo != 1 &&
-                active_user[file][0] != 7) {
+            if (active_user[file] - rightTo != 1 &&
+                active_user[file] != 7) {
                     alert("Вы не можете передать данное право");
                     return;
             }
         }
 
-        give_name = +prompt("Идентификатор получателя");
+        give_name = prompt("Идентификатор получателя");
         var give_id = Users.findUserByName(give_name);
         if (rightTo ==  Users[give_id][file] ||
-            rightTo ==  Users[give_id][file] + 1 ||
+            rightTo ==  Users[give_id][file] - 1 ||
             Users[give_id][file] == 7 ||
             Users[give_id][file] == 6) {
                 alert("У данного пользователя уже есть данное право");
