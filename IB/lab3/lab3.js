@@ -88,14 +88,14 @@ for (var i = 1; i < 6; i++) {
 }
 document.getElementById("admin_name").innerHTML += Users[admin.id];
 
-// Fill names into table
+// Randomize rights
 delete Users[admin.id];
 document.getElementById(admin.id).insertCell(0).innerHTML = admin.name;
 for (var j = 1; j <= 5; j++) {
     document.getElementById(admin.id).insertCell(j).innerHTML = rights[7];
 }
 
-// Fill rights into table
+// Fill names and rights into table
 var data = {};
 for (var i in Users) {
     data = {};
