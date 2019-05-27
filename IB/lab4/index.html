@@ -5,32 +5,39 @@
             .user-required {
                 display: none;
             }
+            table {
+                text-align: center;
+                margin-top: 10%;
+            }
         </style>
     </head>
-    <body onload="init();">
+    <body onload="init()">
         <h3 id="user_name" class="user-required"></h3>
-        <table id="users_access">
-            <tr id="0">
-                <td>Идентификатор</td>
-                <td>Совершенно секретно</td>
-                <td>Секретно</td>
-                <td>Открытые данные</td>
-            </tr>
-            </tr>
-        </table>
-        <table id="files_access">
-            <tr id="0">
-                <td>Идентификатор</td>
-                <td>Совершенно секретно</td>
-                <td>Секретно</td>
-                <td>Открытые данные</td>
-            </tr>
-        </table>
+        <div>
+            <table id="users_access" style="display: inline-block;">
+                <tr id="0">
+                    <td>Идентификатор</td>
+                    <td>Совершенно секретно</td>
+                    <td>Секретно</td>
+                    <td>Открытые данные</td>
+                </tr>
+                </tr>
+            </table>
+            <table id="files_access" style="display: inline-block; vertical-align: top;">
+                <tr id="0">
+                    <td>Идентификатор</td>
+                    <td>Совершенно секретно</td>
+                    <td>Секретно</td>
+                    <td>Открытые данные</td>
+                </tr>
+            </table>
+        </div>
         <div id="actions" class="user_required">
             1. Request - получить доступ к объекту
             2. Quit    - выход из системы 
         </div>
         <button id="btn_action" class="user_required">Действие</button>
     </body>
+    
     <script src="lab4.js"></script>
 </html>
