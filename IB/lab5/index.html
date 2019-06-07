@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            .group {
+                display: block;
+            }
+            #txt_error {
+                background-color: rgba(255, 0, 0, 0.11);
+                color: rgb(255, 0, 0);
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="display: inline-block">
+            <div style="float: left; margin: 10px;">
+                <label for="input_init_string" class="group">Строка для шифрования</label>
+                <input type="text" id="input_init_string" class="group"></input>
+                <label for="input_init_key" class="group">Ключ для шифрования</label>
+                <input type="text" id="input_init_key" class="group"></input>    
+            </div>
+            <div style="float: left; margin: 10px; padding-top: 18px;">
+                <button id="btn_start_encription" onclick="init();" class="group">Начать</button>
+                <span id="txt_error" class="group"></span>
+            </div>
+        </div>
+    </body>
+    <script src="lab5.js"></script>
+</html>
